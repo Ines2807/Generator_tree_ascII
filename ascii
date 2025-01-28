@@ -1,0 +1,82 @@
+
+#include <iostream>
+#include <string>
+#include <cstdlib>
+#include <ctime>
+
+using namespace std;
+
+// Structure pour représenter un nœud de l'arbre
+struct Node {
+    string valeur;
+    Node* gauche;
+    Node* droit;
+};
+
+// Fonction pour créer un nouveau nœud
+Node* createNode(string valeur) {
+    Node* newNode = new Node();
+    if (!newNode) {
+        cerr << "Erreur d'allocation de mémoire" << endl;
+        exit(1);
+    }
+    newNode->valeur = valeur;
+    newNode->gauche = nullptr;
+    newNode->droit = nullptr;
+    return newNode;
+}
+
+// Fonction pour insérer un nouveau nœud dans l'arbre
+void insertNode(Node*& root, string valeur) {
+    if (root == nullptr) {
+        root = createNode(valeur);
+    } else {
+        if (valeur < root->valeur) {
+            insertNode(root->gauche, valeur);
+        } else if (valeur > root->valeur) {
+            insertNode(root->droit, valeur);
+        } else {
+            cerr << "Valeur déjà présente dans l'arbre" << endl;
+        }
+    }
+}
+
+// Fonction pour supprimer l'arbre et libérer la mémoire
+void deleteTree(Node* root) {
+    if (root != nullptr) {
+        deleteTree(root->gauche);
+        deleteTree(root->droit);
+        delete root;
+    }
+}
+
+// Fonction pour afficher l'arbre en ASCII
+void printTree(Node* root, int niveau = 0) {
+    if (root != nullptr) {
+        printTree(root->droit, niveau + 1);
+        for (int i = 0; i < niveau; i++) {
+            cout << "  ";
+        }
+        cout << root->valeur << endl;
+        printTree(root->gauche, niveau + 1);
+    }
+}
+
+int main() {
+    srand(time(nullptr)); // Initialiser le générateur de nombres aléatoires
+    Node* root = nullptr;
+
+    // Insérer des valeurs aléatoires dans l'arbre
+    for (int i = 0; i < 10; i++) {
+        string valeur = to_string(rand() % 100);
+        insertNode(root, valeur);
+    }
+
+    // Afficher l'arbre en ASCII
+    printTree(root);
+
+    // Supprimer l'arbre et libérer la mémoire
+    deleteTree(root);
+
+    return 0;
+}
